@@ -1,5 +1,6 @@
 var request = require('request');
 var secrets = require('./secrets.js')
+var fs = require('fs')
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
@@ -17,14 +18,23 @@ function getRepoContributors(repoOwner, repoName, cb) {
   });
 }
 
+function downloadImageByURL(url, filepath) {
+  request.get(url)
+  .on('error', function (err) {
+    throw err;
+  })
+  .on('response', function (response) {
+    console.log('Response Status Code: ', response.statusCode);
+  })
+  .pipe(fs.createWriteStream('./' + filepath));
+}
+
 
 getRepoContributors('jquery', 'jquery', function(err, result) {
-  // if (err) throw err;
   var avatarURL = '';
   for (var i = 0; i < result.length; i++) {
     avatarURL = result[i].avatar_url;
+  // ./avatar/<variable>.jpg
+  downloadImageByURL(avatarURL, "avatars/" + result[i].login + ".jpg");
   }
-  // console.log('Errors:', err);
-  // console.log('Results:', result);
-  console.log('avatar_url:', avatarURL);
 })
