@@ -1,6 +1,7 @@
 var request = require('request');
-var secrets = require('./secrets.js')
-var fs = require('fs')
+var secrets = require('./secrets.js');
+var fs = require('fs');
+
 
 var repoOwner = process.argv[2];
 var repoName = process.argv[3];
@@ -15,6 +16,7 @@ function getRepoContributors(repoOwner, repoName, cb) {
     }
   };
 
+  //pass object (from JSON string) to the cb function
   request(options, function(err, res, body) {
     cb(err, JSON.parse(body));
   });
@@ -33,7 +35,6 @@ function downloadImageByURL(url, filepath) {
 
 
 getRepoContributors(repoOwner, repoName, function(err, result) {
-  // if (err) throw err;
   if (err) {
     console.log('error:' + err);
     throw err;
@@ -41,7 +42,7 @@ getRepoContributors(repoOwner, repoName, function(err, result) {
   var avatarURL = '';
   for (var i = 0; i < result.length; i++) {
     avatarURL = result[i].avatar_url;
-  //
+  //finding avatars folder in current directory which contains images corresponding to the avatars of the contributors of the repo
   downloadImageByURL(avatarURL, "avatars/" + result[i].login + ".jpg");
   }
 })
